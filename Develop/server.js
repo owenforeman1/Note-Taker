@@ -4,6 +4,7 @@ const app = express();
 const path = require("path");
 
 app.use(express.static("public"));
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
@@ -11,31 +12,27 @@ app.get("/", (req, res) => {
   console.info(`${req.method}`);
 });
 
-// POST request for reviews
-app.post("/api/reviews", (req, res) => {
-  // Inform the client that their POST request was received
-  res.json(`${req.method} request received to add a review`);
-
-  // Log our request to the terminal
-  console.info(`${req.method} request received to add a review`);
+app.get("/api/notes", (req, res) => {
+  res.sendFile(path.join(__dirname, "./db/db.json"));
 });
 
-// GET request for upvotes
-app.get("/api/upvotes", (req, res) => {
-  // Inform the client
-  res.json(`${req.method} request received to retrieve upvote count`);
 
-  // Log our request to the terminal
-  console.info(`${req.method} request received to retrieve upvote count`);
+app.post("/api/notes", (req, res) => {
+  console.log(req.body);
+  res.send("bobobobobobobobo")
 });
 
-// POST request
-app.post("/api/upvotes", (req, res) => {
-  // Inform the client that their POST request was received
-  res.json(`${req.method} request received to upvote`);
+app.delete("/api/notes/:id", (req, res) => {
+  res.send(req.params);
+  console.log(req.params);
+});
 
-  // Log our request to the terminal
-  console.info(`${req.method} request received to upvote`);
+app.post("/api/reviews", (req, res) => {});
+
+app.get("/notes", (req, res) => {
+  res.sendFile(path.join(__dirname, "./public/notes.html"));
+
+  console.info(`${req.method}`);
 });
 
 app.listen(PORT, () =>
