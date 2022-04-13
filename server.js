@@ -16,6 +16,7 @@ app.get("/api/notes", (req, res) => {
 });
 
 app.post("/api/notes", (req, res) => {
+  console.log("Post Request");
   if (req.body && req.body.title) {
     fs.readFile("./db/db.json", "utf8", (err, data) => {
       if (err) {
@@ -23,7 +24,6 @@ app.post("/api/notes", (req, res) => {
       } else {
         const newData = JSON.parse(data);
         newData.push(req.body);
-        console.log(newData);
         idSetter(newData);
         fs.writeFile("./db/db.json", JSON.stringify(newData), (err) => {
           if (err) console.log(err);
@@ -35,26 +35,43 @@ app.post("/api/notes", (req, res) => {
       }
     });
   }
-  res.send("hello");
+  res.sendStatus(200);
 });
 
 function idSetter(newData) {
   for (let index = 0; index < newData.length; index++) {
     const element = newData[index];
-    element.id = index
+    element.id = index + 1;
   }
 }
 
 app.delete("/api/notes/:id", (req, res) => {
-  res.send(req.params);
-  console.log(req.params);
+  console.log("Note Deleted");
+  if (req.params && req.params.id) {
+    const idValue = req.params.id - 1;
+    console.log(idValue);
+    fs.readFile("./db/db.json", "utf8", (err, data) => {
+      if (err) {
+        console.error(err);
+      } else {
+        const newData = JSON.parse(data);
+        newData.splice(idValue, 1);
+        idSetter(newData);
+        fs.writeFile("./db/db.json", JSON.stringify(newData), (err) => {
+          if (err) console.log(err);
+          else {
+            console.log("File written successfully\n");
+            console.log("The written has the following contents:");
+          }
+        });
+      }
+    });
+  }
+  res.sendStatus(200);
 });
-
-app.post("/api/reviews", (req, res) => {});
 
 app.get("/notes", (req, res) => {
   res.sendFile(path.join(__dirname, "./public/notes.html"));
-
   console.info(`${req.method}`);
 });
 
